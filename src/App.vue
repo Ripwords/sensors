@@ -9,6 +9,7 @@ const g = ref()
 const msg = ref("")
 
 const request = () => {
+  console.log(requestDeviceOrientation())
   if (requestDeviceOrientation()) {
     const { alpha, beta, gamma } = useDeviceOrientation()
     a.value = alpha
