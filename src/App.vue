@@ -36,6 +36,17 @@ function requestMotion() {
       .catch(console.error)
   } else {
     // handle regular non iOS 13+ devices
+    window.addEventListener('devicemotion', (e: any) => {
+      x_grav.value = e.accelerationIncludingGravity.x.toFixed(2)
+      y_grav.value = e.accelerationIncludingGravity.y.toFixed(2)
+      z_grav.value = e.accelerationIncludingGravity.z.toFixed(2)
+      x.value = e.acceleration.x.toFixed(2)
+      y.value = e.acceleration.y.toFixed(2)
+      z.value = e.acceleration.z.toFixed(2)
+      alphaRotate.value = e.rotationRate.alpha.toFixed(2)
+      betaRotate.value = e.rotationRate.beta.toFixed(2)
+      gammaRotate.value = e.rotationRate.gamma.toFixed(2)
+    })
   }
 }
 
