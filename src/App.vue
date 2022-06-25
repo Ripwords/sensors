@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { store } from './store'
+import { useIntervalFn, useTimeout } from '@vueuse/core'
+import { export2json } from './functions/export2json'
 
+const s = store()
+const showExport = ref(false)
+const pollRate = ref(50) //ms
 const a = ref()
 const b = ref()
 const g = ref()
@@ -13,9 +19,9 @@ const z = ref()
 const alphaRotate = ref()
 const betaRotate = ref()
 const gammaRotate = ref()
+const time = ref(10) //seconds
 
-function requestMotion() {
-  // feature detect
+const requestMotion = () => {
   if (typeof (DeviceMotionEvent as any).requestPermission === 'function') {
     (DeviceMotionEvent as any).requestPermission()
       .then((permissionState: any) => {
@@ -35,7 +41,6 @@ function requestMotion() {
       })
       .catch(console.error)
   } else {
-    // handle regular non iOS 13+ devices
     window.addEventListener('devicemotion', (e: any) => {
       x_grav.value = e.accelerationIncludingGravity.x.toFixed(2)
       y_grav.value = e.accelerationIncludingGravity.y.toFixed(2)
@@ -50,8 +55,7 @@ function requestMotion() {
   }
 }
 
-function requestOrientation() {
-  // feature detect
+const requestOrientation = () => {
   if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
     (DeviceOrientationEvent as any).requestPermission()
       .then((permissionState: any) => {
@@ -65,7 +69,6 @@ function requestOrientation() {
       })
       .catch(console.error);
   } else {
-    // handle regular non iOS 13+ devices
     window.addEventListener('deviceorientation', (e: any) => {
       e.alpha && (a.value = e.alpha.toFixed(2))
       e.beta && (b.value = e.beta.toFixed(2))
@@ -74,25 +77,115 @@ function requestOrientation() {
   }
 }
 
+const request = () => {
+  requestMotion()
+  requestOrientation()
+}
+
+const startLog = () => {
+  const t = time.value
+  const { ready, start } = useTimeout(t * 1000, { controls: true })
+  start()
+  const { pause } = useIntervalFn(() => {
+
+    if (!ready.value) {
+      time.value -= (pollRate.value / 1000)
+      s.data.motion.aRot.push(alphaRotate.value)
+      s.data.motion.bRot.push(betaRotate.value)
+      s.data.motion.gRot.push(gammaRotate.value)
+      s.data.motion.x_grav.push(x_grav.value)
+      s.data.motion.y_grav.push(y_grav.value)
+      s.data.motion.z_grav.push(z_grav.value)
+      s.data.motion.x.push(x.value)
+      s.data.motion.y.push(y.value)
+      s.data.motion.z.push(z.value)
+      s.data.orientation.alpha.push(a.value)
+      s.data.orientation.beta.push(b.value)
+      s.data.orientation.gamma.push(g.value)
+    } else {
+      pause()
+      showExport.value = true
+      time.value = 10
+      return
+    }
+  }, pollRate.value)
+}
 </script>
 
 <template>
-  <button @click="requestOrientation">Request</button>
-  <div>
-    <p>alpha: {{ a }}</p>
-    <p>beta: {{ b }}</p>
-    <p>gamma: {{ g }}</p>
+  <button @click="request">Request</button>
+  <div class="grid">
+    <div>
+      <div>
+        <p>&alpha;: {{ a }}</p>
+        <p>&beta;: {{ b }}</p>
+        <p>&gamma;: {{ g }}</p>
+      </div>
+      <br>
+      <div>
+        <p>x&kappa;: {{ x_grav }}</p>
+        <p>y&kappa;: {{ y_grav }}</p>
+        <p>z&kappa;: {{ z_grav }}</p>
+      </div>
+    </div>
+    <div>
+      <div>
+        <p>x: {{ x }}</p>
+        <p>y: {{ y }}</p>
+        <p>z: {{ z }}</p>
+      </div>
+      <br>
+      <div>
+        <p>&alpha;&theta;: {{ alphaRotate }}</p>
+        <p>&beta;&theta;: {{ betaRotate }}</p>
+        <p>&gamma;&theta;: {{ gammaRotate }}</p>
+      </div>
+    </div>
   </div>
-  <button @click="requestMotion">Request</button>
+  <br>
+  <br>
+  <!-- Input amount of time to log data -->
   <div>
-    <p>x_grav: {{ x_grav }}</p>
-    <p>y_grav: {{ y_grav }}</p>
-    <p>z_grav: {{ z_grav }}</p>
-    <p>x: {{ x }}</p>
-    <p>y: {{ y }}</p>
-    <p>z: {{ z }}</p>
-    <p>alphaRotate: {{ alphaRotate }}</p>
-    <p>betaRotate: {{ betaRotate }}</p>
-    <p>gammaRotate: {{ gammaRotate }}</p>
+    <p>Data Log Period:</p>
+    <input type="number" v-model="time" />s
+    <button @click="startLog">Start</button>
+  </div>
+  <!-- Polling Rate of data -->
+  <div>
+    <p>Polling Rate:</p>
+    <input type="number" v-model="pollRate" />ms
+  </div>
+  <!-- Export data -->
+  <div v-if="showExport">
+    <button v-if="showExport" @click="export2json(s.data)">Export</button>
   </div>
 </template>
+
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* CSS 2 Column grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
+}
+</style>
