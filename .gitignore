@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 *.mp4
+*.ipynb
+./sensors_plot
+./sensors_plot/data
