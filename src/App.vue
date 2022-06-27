@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import Quaternion from 'Quaternion'
 import { store } from './store'
 import { useIntervalFn, useTimeout } from '@vueuse/core'
 import { export2json } from './functions/export2json'
+import Orient from './components/Orient.vue';
 
 const s = store()
 const showExport = ref(false)
@@ -60,19 +62,55 @@ const requestOrientation = () => {
     (DeviceOrientationEvent as any).requestPermission()
       .then((permissionState: any) => {
         if (permissionState === 'granted') {
-          window.addEventListener('deviceorientation', (e: any) => {
-            e.alpha && (a.value = e.alpha.toFixed(2))
-            e.beta && (b.value = e.beta.toFixed(2))
-            e.gamma && (g.value = e.gamma.toFixed(2))
+          let phone: any = document.querySelector(".phone");
+          let mat: any = document.querySelector("#mat");
+          let dom: any = {}
+          dom.w = document.querySelector("#w");
+          dom.x = document.querySelector("#x");
+          dom.y = document.querySelector("#y");
+          dom.z = document.querySelector("#z");
+          window.addEventListener('deviceorientation', (ev: any) => {
+            let q: any = Quaternion.fromEuler((ev.alpha) * rad, (ev.beta) * rad, ev.gamma * rad, 'ZXY');
+            Object.keys(q).map((k) => {
+              dom[k].innerHTML = q[k];
+            });
+            let matData = q.conjugate().toMatrix();
+            matData.forEach((val: any, idx: any) => {
+              const row = mat.children[Math.floor(idx / 3)];
+              const col = row.children[idx % 3];
+              col.innerHTML = val.toFixed(3);
+            });
+            phone.style.transform = "matrix3d(" + q.conjugate().toMatrix4() + ")";
+            ev.alpha && (a.value = ev.alpha.toFixed(2))
+            ev.beta && (b.value = ev.beta.toFixed(2))
+            ev.gamma && (g.value = ev.gamma.toFixed(2))
           })
         }
       })
       .catch(console.error);
   } else {
-    window.addEventListener('deviceorientation', (e: any) => {
-      e.alpha && (a.value = e.alpha.toFixed(2))
-      e.beta && (b.value = e.beta.toFixed(2))
-      e.gamma && (g.value = e.gamma.toFixed(2))
+    let phone: any = document.querySelector(".phone");
+    let mat: any = document.querySelector("#mat");
+    let dom: any = {}
+    dom.w = document.querySelector("#w");
+    dom.x = document.querySelector("#x");
+    dom.y = document.querySelector("#y");
+    dom.z = document.querySelector("#z");
+    window.addEventListener('deviceorientation', (ev: any) => {
+      let q: any = Quaternion.fromEuler((ev.alpha) * rad, (ev.beta) * rad, ev.gamma * rad, 'ZXY');
+      Object.keys(q).map((k) => {
+        dom[k].innerHTML = q[k];
+      });
+      let matData = q.conjugate().toMatrix();
+      matData.forEach((val: any, idx: any) => {
+        const row = mat.children[Math.floor(idx / 3)];
+        const col = row.children[idx % 3];
+        col.innerHTML = val.toFixed(3);
+      });
+      phone.style.transform = "matrix3d(" + q.conjugate().toMatrix4() + ")";
+      ev.alpha && (a.value = ev.alpha.toFixed(2))
+      ev.beta && (b.value = ev.beta.toFixed(2))
+      ev.gamma && (g.value = ev.gamma.toFixed(2))
     })
   }
 }
@@ -110,6 +148,13 @@ const startLog = () => {
     }
   }, pollRate.value)
 }
+
+
+let rad = Math.PI / 180;
+
+onMounted(() => {
+
+})
 </script>
 
 <template>
@@ -159,6 +204,9 @@ const startLog = () => {
   <div v-if="showExport">
     <button v-if="showExport" @click="export2json(s.data)">Export</button>
   </div>
+  <br>
+  <br>
+  <Orient />
 </template>
 
 <style>

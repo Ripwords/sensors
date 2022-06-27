@@ -4,6 +4,7 @@ specifiers:
   '@vitejs/plugin-vue': ^2.3.3
   '@vueuse/core': ^8.7.5
   pinia: ^2.0.14
+  quaternion: ^1.4.0
   typescript: ^4.5.4
   vite: ^2.9.9
   vue: ^3.2.25
@@ -12,6 +13,7 @@ specifiers:
 dependencies:
   '@vueuse/core': 8.7.5_vue@3.2.37
   pinia: 2.0.14_j6bzmzd4ujpabbp5objtwxyjp4
+  quaternion: 1.4.0
   vue: 3.2.37
 
 devDependencies:
@@ -484,6 +486,10 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+
+  /quaternion/1.4.0:
+    resolution: {integrity: sha512-SIUOOoFbJOiu8vftqHsT7W1eH8YEDTpup00/Yj67Rx0CYq4bslH+T+bkt0Z7idQqk17U9aYfDCp4l5v7t/9Sxg==}
+    dev: false
 
   /resolve/1.22.1:
     resolution: {integrity: sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw==}
