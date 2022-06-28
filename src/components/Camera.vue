@@ -5,6 +5,7 @@
   onMounted(() => {
     startCam = async () => {
       let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      console.log(stream)
       vid.value.srcObject = stream
     }
   })
