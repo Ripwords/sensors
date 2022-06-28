@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import Quaternion from 'Quaternion'
+import Quaternion from 'quaternion'
 import { store } from './store'
 import { useIntervalFn, useTimeout } from '@vueuse/core'
 import { export2json } from './functions/export2json'

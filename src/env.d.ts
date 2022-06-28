@@ -8,3 +8,4 @@ declare module '*.vue' {
 }
 
 declare module "Quaternion"
+declare module "quaternion"
