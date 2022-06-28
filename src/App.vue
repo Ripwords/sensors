@@ -4,7 +4,8 @@ import Quaternion from 'Quaternion'
 import { store } from './store'
 import { useIntervalFn, useTimeout } from '@vueuse/core'
 import { export2json } from './functions/export2json'
-import Orient from './components/Orient.vue';
+import Orient from './components/Orient.vue'
+import Camera from './components/Camera.vue'
 
 const s = store()
 const showExport = ref(false)
@@ -207,6 +208,7 @@ onMounted(() => {
   <br>
   <br>
   <Orient />
+  <Camera />
 </template>
 
 <style>
