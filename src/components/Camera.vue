@@ -3,7 +3,7 @@
   const vid = ref<any>()
   const startCam = async () => {
     let cam_stream = await navigator.mediaDevice.getUserMedia({ video: true })
-    vid.srcObject = cam_stream
+    vid.value.srcObject = cam_stream
   }
 </script>
 
