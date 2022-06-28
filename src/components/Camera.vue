@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <button @click="">
+  <button @click="startCam">
     Start Camera
   </button>
   <video ref="vid" width="320" height="240" autoplay></video>
