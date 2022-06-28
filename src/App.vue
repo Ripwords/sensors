@@ -210,26 +210,6 @@ onMounted(() => {
 </template>
 
 <style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* CSS 2 Column grid layout */
 .grid {
   display: grid;
