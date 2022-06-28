@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-  import { ref } from "vue"
+  import { ref, onMounted } from "vue"
   const vid = ref<any>()
-  const startCam = async () => {
-    let cam_stream = await navigator.mediaDevices.getUserMedia({ video: true })
-    vid.value.src = cam_stream
-  }
+  let startCam = () => {}
+  onMounted(() => {
+    startCam = async () => {
+      let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    }
+  })
 </script>
 
 <template>
