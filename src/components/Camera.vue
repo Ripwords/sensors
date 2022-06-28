@@ -2,7 +2,7 @@
   import { ref } from "vue"
   const vid = ref<any>()
   const startCam = async () => {
-    let cam_stream = await navigator.mediaDevice.getUserMedia({ video: true })
+    let cam_stream = await navigator.mediaDevices.getUserMedia({ video: true })
     vid.value.srcObject = cam_stream
   }
 </script>
